@@ -1,0 +1,4 @@
+<strings>
+    <string id="AppName">PomoMin</string>
+    <string id="TimerExpired" scope="background">Your pomodoro has expired!</string>
+</strings>

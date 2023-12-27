@@ -1,6 +1,10 @@
-# PomoMin - Precision Pomodoro Timer for Garmin Watches
+# PomoMin - Pomodoro Timer for Garmin Watches
 
-Welcome to PomoMin, a precision Pomodoro timer seamlessly integrated with Garmin watches. This application is designed to enhance focus and productivity through precise timing, incorporating the proven Pomodoro technique into your workflow.
+
+![PomoMin App](images/app_heroe.png)
+
+---
+Welcome to PomoMin, a Pomodoro timer seamlessly integrated with Garmin watches. This application is designed to enhance focus and productivity through precise timing, incorporating the proven Pomodoro technique into your workflow.
 
 ## Features
 
@@ -20,3 +24,7 @@ To install PomoMin on your Garmin watch, you would typically follow these steps:
 3. Sync your Garmin watch with the Garmin Connect IQ app.
 
 Please note that these steps might vary slightly depending on the specific model of your Garmin watch and the version of the Garmin Connect IQ app that you are using.
+
+## Contact
+
+I welcome your valuable suggestions and comments to enhance your PomoMin experience. Reach out to me at chavinvan@gmail.com.

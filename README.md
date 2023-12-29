@@ -25,6 +25,14 @@ To install PomoMin on your Garmin watch, you would typically follow these steps:
 
 Please note that these steps might vary slightly depending on the specific model of your Garmin watch and the version of the Garmin Connect IQ app that you are using.
 
+## Roadmap
+
+- [x] Enhance completion alert message
+- [x] Add vibration after completion when the screen is active
+- [] Refactor code
+- [x] Add a background circle for better progress bar visualization
+- [] Make Time Configurations Customizable
+
 ## Contact
 
 I welcome your valuable suggestions and comments to enhance your PomoMin experience. Reach out to me at chavinvan@gmail.com.

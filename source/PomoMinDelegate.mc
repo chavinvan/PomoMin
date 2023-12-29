@@ -25,13 +25,5 @@ class PomoMinDelegate extends WatchUi.BehaviorDelegate {
     public function onBack() as Boolean {
         return _pomoView.resetTimer();
     }
-    /*
-    // Detect Menu button input
-    function onKey(keyEvent) {
-        System.println("pressed"); // e.g. KEY_MENU = 7
-        //_startProgressBar.invoke();
-        _pomoView.onBarChanged();
-        WatchUi.requestUpdate();
-        return true;
-    }*/
+
 }

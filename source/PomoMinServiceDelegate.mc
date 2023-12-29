@@ -29,7 +29,12 @@ class PomoMinServiceDelegate extends System.ServiceDelegate {
 
         // Use background resources if they are available
         if (Application has :loadResource) {
-            Background.requestApplicationWake(Application.loadResource($.Rez.Strings.TimerExpired) as String);
+            var pomodoroState = Storage.getValue(4);
+            if (pomodoroState == 0) {
+                Background.requestApplicationWake(Application.loadResource($.Rez.Strings.WorkTimerExpired) as String);
+            } else {
+                Background.requestApplicationWake(Application.loadResource($.Rez.Strings.BreakTimerExpired) as String);
+            }
         } else {
             Background.requestApplicationWake("Your timer has expired!");
         }

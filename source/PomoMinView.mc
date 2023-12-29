@@ -6,6 +6,7 @@ import Toybox.Application.Storage;
 import Toybox.Application;
 import Toybox.Time;
 import Toybox.Timer;
+import Toybox.Attention;
 
 //! The main view for the timer application. This displays the
 //! remaining time on the countdown timer
@@ -201,9 +202,38 @@ class PomoMinView extends WatchUi.View {
             _timerDuration = 25 * 60;
             _pomodoroState = POMODORO_STATE_WORK;
         }
+
+        // Vibrate
+        if (Attention has :vibrate) {
+            var vibeData =
+            [
+                new Attention.VibeProfile(50, 1000), // On for two seconds
+                new Attention.VibeProfile(0, 500),  // Off for two seconds
+                new Attention.VibeProfile(50, 1000), // On for two seconds
+                new Attention.VibeProfile(0, 1000),  // Off for two seconds
+                new Attention.VibeProfile(50, 1000), // On for two seconds
+                new Attention.VibeProfile(0, 1000),  // Off for two seconds
+            ];
+
+            Attention.vibrate(vibeData);
+        }
+
+        if (Attention has :ToneProfile) {
+            var toneProfile =
+            [
+                new Attention.ToneProfile( 2500, 250),
+                new Attention.ToneProfile( 0, 250),
+                new Attention.ToneProfile( 2500, 250),
+                new Attention.ToneProfile( 0, 250),
+                new Attention.ToneProfile( 2500, 250),
+                new Attention.ToneProfile( 0, 250),
+            ];
+            Attention.playTone({:toneProfile=>toneProfile});
+        }
+
+        
         saveProperties();
         WatchUi.requestUpdate();
-        System.println("finishTimerFromForeground");
     }
 
     // Update the view
@@ -216,7 +246,7 @@ class PomoMinView extends WatchUi.View {
             dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
             System.println("POMODORO_STATE_WORK");
         }else if(_pomodoroState == POMODORO_STATE_BREAK){
-            dc.setColor(0xf5c950, Graphics.COLOR_BLACK);
+            dc.setColor(0xffaa55, Graphics.COLOR_BLACK);
             System.println("POMODORO_STATE_BREAK");
         }
 
@@ -224,11 +254,9 @@ class PomoMinView extends WatchUi.View {
 
         if(_timerState == TIMER_STATE_STOPPED){
             // only draw
-            System.println("TIMER_STATE_STOPPED");
             
         }else if(_timerState == TIMER_STATE_RUNNING){
            elapsed = Time.now().value() - _timerStartTime;
-            System.println("RUNNING");
            if(elapsed >= _timerDuration) {
                 elapsed = _timerDuration;
                 _timerPauseTime = Time.now().value();
@@ -343,6 +371,9 @@ class PomoMinView extends WatchUi.View {
         //dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
         //dc.clear();
         
+        dc.setPenWidth(1);
+        dc.drawArc(dc.getWidth()/2, dc.getHeight()/2, dc.getWidth()/2-19, Graphics.ARC_CLOCKWISE, 90, 90);
+
         dc.setPenWidth(10);
         dc.drawArc(dc.getWidth()/2, dc.getHeight()/2, dc.getWidth()/2-20, Graphics.ARC_CLOCKWISE, 90, angle);
         //dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);

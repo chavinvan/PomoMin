@@ -32,7 +32,12 @@ Please note that these steps might vary slightly depending on the specific model
 - [ ] Refactor code
 - [x] Add a background circle for better progress bar visualization
 - [ ] Make Time Configurations Customizable
-
+- [ ] Support other languages:
+    - [x] Spanish
+    - [x] Italian
+    - [ ] French
+    - [ ] German
+    
 ## Contact
 
 I welcome your valuable suggestions and comments to enhance your PomoMin experience. Reach out to me at chavinvan@gmail.com.

@@ -30,7 +30,7 @@ class PomoMinView extends WatchUi.View {
     private enum PomodoroState {
         POMODORO_STATE_WORK,
         POMODORO_STATE_BREAK,
-        POMODORO_STATE_LONG_BREAK,
+       // POMODORO_STATE_LONG_BREAK,
     }
 
     private var _timerState = TIMER_STATE_STOPPED;
@@ -128,7 +128,6 @@ class PomoMinView extends WatchUi.View {
 
         _timerStartTime = null;
         _timerPauseTime = null;
-        System.println("initializeTimerData");
     }
 
     function initializeTimerRunningData() as Void {
@@ -147,7 +146,6 @@ class PomoMinView extends WatchUi.View {
         _timerPauseTime = Storage.getValue(TIMER_KEY_PAUSE_TIME);
         _timerDuration = Storage.getValue(TIMER_KEY_DURATION);
         _timer.start(method(:requestUpdate), 1000, true);
-        System.println("initializeTimerRunningData");
     }
 
     function initializeTimerPausedData() as Void {
@@ -164,7 +162,6 @@ class PomoMinView extends WatchUi.View {
         _timerStartTime = Storage.getValue(TIMER_KEY_START_TIME);
         _timerPauseTime = Storage.getValue(TIMER_KEY_PAUSE_TIME);
         _timerDuration = Storage.getValue(TIMER_KEY_DURATION);
-        System.println("initializeTimerPausedData");
     }
 
     function initializeStoppedTimerData() as Void {
@@ -182,7 +179,6 @@ class PomoMinView extends WatchUi.View {
         _pomodoroState = lastPomodoroState;
         _timerStartTime = null;
         _timerPauseTime = null;
-        System.println("initializeStoppedTimerData");
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -241,13 +237,10 @@ class PomoMinView extends WatchUi.View {
         View.onUpdate(dc);
 
         var elapsed = 0;
-        System.println(_timerDuration);
         if(_pomodoroState == POMODORO_STATE_WORK){
             dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
-            System.println("POMODORO_STATE_WORK");
         }else if(_pomodoroState == POMODORO_STATE_BREAK){
             dc.setColor(0xffaa55, Graphics.COLOR_BLACK);
-            System.println("POMODORO_STATE_BREAK");
         }
 
         dc.clear();
@@ -268,8 +261,6 @@ class PomoMinView extends WatchUi.View {
         }else if(_timerState == TIMER_STATE_PAUSED){
             elapsed = _timerPauseTime - _timerStartTime;
             dc.setColor(0x9db8cf, Graphics.COLOR_BLACK);
-            System.println("PAUSED");
-
         }
         
 

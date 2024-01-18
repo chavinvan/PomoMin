@@ -44,7 +44,7 @@ class PomoMinApp extends Application.AppBase {
         _pomoView = new $.PomoMinView(_backgroundData);
         _pomoView.deleteBackgroundEvent();
         if (_pomoView != null) {
-            return [_pomoView, new $.PomoMinDelegate(_pomoView)] as Array<Views or InputDelegates>?;
+            return [_pomoView, new $.PomoMinDelegate(_pomoView, _backgroundData)] as Array<Views or InputDelegates>?;
         }
         return null;
     }

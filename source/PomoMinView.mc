@@ -45,12 +45,18 @@ class PomoMinView extends WatchUi.View {
     private var _timerPauseTime as Number?;
 
     private var _timer as Timer.Timer;
+    private var _timerController as PomoMinTimerController;
 
     //! Initialize variables for this view
     //! @param backgroundRan Contains background data if background ran
     function initialize(backgroundRan as PersistableType) {
         View.initialize();
 
+        // create timer controller
+        _timerController = new PomoMinTimerController(self, backgroundRan);
+
+        System.println("VIEW initialize");
+        
         // Create our timer object that is used to drive display updates
         _timer = new Timer.Timer();
 
@@ -109,6 +115,14 @@ class PomoMinView extends WatchUi.View {
 
     }
 
+    public function onSelectPressed() as Boolean {
+        return _timerController.onSelectPressed();
+    }
+
+    public function onBackPressed() as Boolean {
+        return _timerController.onBackPressed();
+    }
+    
     // Use this when a message indicating that the timer has expired
     // is received from the background process. This will reset the
     // timer back to the default value.

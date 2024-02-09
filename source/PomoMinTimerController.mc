@@ -133,8 +133,8 @@ class PomoMinTimerController {
 
     public function onBackPressed() as Boolean {
         // check current state
-        // if it's already running, it should exit from the app
-        if(_timerState == TIMER_STATE_RUNNING){
+        // if it's already running or it is stopped, it should exit from the app
+        if(_timerState != TIMER_STATE_PAUSED){
             return false;
         }
 
@@ -143,7 +143,7 @@ class PomoMinTimerController {
         initializeTimerDataManually();
 
         // TODO: Needed? save current properties because there was a change
-        // saveProperties();
+        saveProperties();
 
         // update view
         _pomoView.requestUpdate(null, null);

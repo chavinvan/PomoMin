@@ -143,7 +143,10 @@ class PomoMinTimerController {
         initializeTimerDataManually();
 
         // TODO: Needed? save current properties because there was a change
-        saveProperties();
+        // saveProperties();
+
+        // reinitialize timer values
+        _pomoView.initializeTimerValues(_timerDuration);
 
         // update view
         _pomoView.requestUpdate(null, null);

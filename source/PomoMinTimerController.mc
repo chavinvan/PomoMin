@@ -28,6 +28,8 @@ class PomoMinTimerController {
        // POMODORO_STATE_LONG_BREAK,
     }
 
+
+
     private var _pomoView as PomoMinView;
     private var _timer as Timer.Timer;
     private var _timerState = TIMER_STATE_STOPPED;
@@ -74,10 +76,11 @@ class PomoMinTimerController {
             }
 
         }
-
-        _pomoView.initializeTimerValues(_timerDuration);
+        
+        _pomoView.initializeTimerValues(_timerDuration, _pomodoroState);
     }
 
+    
     public function onSelectPressed() as Boolean {
         //_pomoView.startStopTimer();
 
@@ -143,10 +146,10 @@ class PomoMinTimerController {
         initializeTimerDataManually();
 
         // TODO: Needed? save current properties because there was a change
-        // saveProperties();
+        //saveProperties();
 
         // reinitialize timer values
-        _pomoView.initializeTimerValues(_timerDuration);
+        _pomoView.initializeTimerValues(_timerDuration, _pomodoroState);
 
         // update view
         _pomoView.requestUpdate(null, null);

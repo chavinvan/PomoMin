@@ -16,6 +16,16 @@ class PomoMinView extends WatchUi.View {
     private var _timerDuration as Number?;
     private var _timerValue as Number?;
     private var _timerController as PomoMinTimerController;
+    private var _timerColor as Graphics.ColorType?;
+
+    private enum PomodoroState {
+        POMODORO_STATE_WORK,
+        POMODORO_STATE_BREAK,
+       // POMODORO_STATE_LONG_BREAK,
+    }
+
+    const TIMER_WORK_COLOR = Graphics.COLOR_BLUE;
+    const TIMER_BREAK_COLOR = 0xffaa55;
 
     //! Initialize variables for this view
     //! @param backgroundRan Contains background data if background ran
@@ -26,9 +36,18 @@ class PomoMinView extends WatchUi.View {
         _timerController = new PomoMinTimerController(self, backgroundRan);
     }
 
-    public function initializeTimerValues(timerDuration as Number) as Void {
+    public function initializeTimerValues(timerDuration as Number, pomodoroState as Number) as Void {
         _timerValue = timerDuration;
         _timerDuration = timerDuration;
+        _timerColor = _getTimerColor(pomodoroState);
+    }
+
+    private function _getTimerColor(pomodoroState as Number) as Graphics.ColorType{
+        if(pomodoroState == POMODORO_STATE_WORK){
+            return TIMER_WORK_COLOR;
+        }else if(_pomodoroState == POMODORO_STATE_BREAK){
+            return TIMER_BREAK_COLOR;
+        }
     }
 
     public function onSelectPressed() as Boolean {
@@ -93,7 +112,7 @@ class PomoMinView extends WatchUi.View {
             elapsed = _timerPauseTime - _timerStartTime;
             dc.setColor(0x9db8cf, Graphics.COLOR_BLACK);
         }*/
-        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
+        dc.setColor(_timerColor, Graphics.COLOR_BLACK);
         dc.clear();
         var timerValue = _timerValue;
 

@@ -30,8 +30,12 @@ class PomoMinTimerController {
 
     private var _pomoView as PomoMinView;
     private var _timer as Timer.Timer;
-    private var _timerState as TimerState;
-    private var _pomodoroState as PomodoroState;
+    private var _timerState = TIMER_STATE_STOPPED;
+    private var _pomodoroState = POMODORO_STATE_WORK;
+
+    private var _timerDuration as Number?;
+    private var _timerStartTime as Number?;
+    private var _timerPauseTime as Number?;
 
     function initialize(pomoView as PomoMinView, backgroundRan as PersistableType) {
         _pomoView = pomoView;
@@ -42,8 +46,9 @@ class PomoMinTimerController {
         // Fetch the current state from storage
         _timerState = Storage.getValue(TIMER_KEY_TIMER_STATE);
 
-        if(_timerState == null)
+        if(_timerState == null){
             _timerState = TIMER_STATE_STOPPED;
+        }
 
         // Fetch the persisted values from storage
         if (backgroundRan != null) {
@@ -69,6 +74,8 @@ class PomoMinTimerController {
             }
 
         }
+
+        _pomoView.initializeTimerValues(_timerDuration);
     }
 
     public function onSelectPressed() as Boolean {
@@ -119,7 +126,7 @@ class PomoMinTimerController {
         saveProperties();
 
         // update view. Maybe needed only when paused?
-        _pomodoroView.requestUpdate();
+        //_pomoView.requestUpdate(null, null);
         return true;
     }
 
@@ -127,19 +134,26 @@ class PomoMinTimerController {
     public function onBackPressed() as Boolean {
         // check current state
         // if it's already running, it should exit from the app
-        if(_timerState == TIMER_STATE_RUNNING)
+        if(_timerState == TIMER_STATE_RUNNING){
             return false;
-        
-        // if it is paused or stopped, it should restart
-        _timerState = TIMER_STATE_STOPPED
-        initializeTimerDataManually()
+        }
 
-        // save current properties because there was a change
-        saveProperties();
+        // if it is paused or stopped, it should restart
+        _timerState = TIMER_STATE_STOPPED;
+        initializeTimerDataManually();
+
+        // TODO: Needed? save current properties because there was a change
+        // saveProperties();
 
         // update view
-        _pomoView.requestUpdate();
+        _pomoView.requestUpdate(null, null);
         return true;
+    }
+
+    function resetTimerVariables() as Void {
+        _timerState = TIMER_STATE_STOPPED;
+        _timerStartTime = null;
+        _timerPauseTime = null;
     }
 
     // Use this when a message indicating that the timer has expired
@@ -157,10 +171,8 @@ class PomoMinTimerController {
             changeStateToWork();
         }
 
-        // reset variables
-        _timerState = TIMER_STATE_STOPPED;
-        _timerStartTime = null;
-        _timerPauseTime = null;
+        // reset timer variables
+        resetTimerVariables();
     }
 
     // Use this when the timer has been manually reset.
@@ -176,10 +188,8 @@ class PomoMinTimerController {
             changeStateToWork();
         }
 
-        // reset variables
-        _timerState = TIMER_STATE_STOPPED;
-        _timerStartTime = null;
-        _timerPauseTime = null;
+        // reset timer variables
+        resetTimerVariables();
     }
 
     function initializeTimerDataPausedOrRunning() as Void {
@@ -207,8 +217,9 @@ class PomoMinTimerController {
         // Fetch the current state from storage
         var lastPomodoroState = Storage.getValue(TIMER_KEY_POMODORO_STATE);
         
-        if(lastPomodoroState == null)
+        if(lastPomodoroState == null){
             lastPomodoroState = POMODORO_STATE_WORK;
+        }
 
         // define next state and duration
         if(lastPomodoroState == POMODORO_STATE_WORK){
@@ -217,12 +228,11 @@ class PomoMinTimerController {
             changeStateToBreak();
         }
 
-        // reset variables
-        _timerStartTime = null;
-        _timerPauseTime = null;
+        // reset timer variables
+        resetTimerVariables();
     }
 
-    private function secondPassed(){
+    public function secondPassed() as Void{
 
         var elapsed = 0;
 
@@ -249,8 +259,8 @@ class PomoMinTimerController {
         // calculate timer value
         var timerValue = _timerDuration - elapsed;
 
-        // TODO: send the timer value to the view, where it must calculate seconds, minutes, string and angle
-        // TODO: request update of the view
+        // Send the timer value to the view, where it must calculate seconds, minutes, string and angle
+        _pomoView.requestUpdate(timerValue, _timerDuration);
     }
 
     private function finishTimerFromForeground() as Void{
@@ -264,17 +274,59 @@ class PomoMinTimerController {
             changeStateToWork();
         }
 
-        // TODO: voy por este método
+        
+        // reset timer variables
+        resetTimerVariables();
+
+        // TODO: Vibrate
+        _pomoView.vibrate();
+
+        // TODO: Update UI? I think it's not needed as it's being updated from secondPassed
+
+        // TODO: Save properties?
     }
 
-    private changeStateToWork() as Void {
+    private function changeStateToWork() as Void {
         _timerDuration = 25 * 60; // TODO: minutes from config
         _pomodoroState = POMODORO_STATE_WORK;
     }
 
-    private changeStateToBreak() as Void {
+    private function changeStateToBreak() as Void {
         _timerDuration = 5 * 60; // TODO: minutes from config
         _pomodoroState = POMODORO_STATE_BREAK;
+    }
+
+    public function setBackgroundEvent() as Void {
+
+        // Check timer state
+        if (_timerState == TIMER_STATE_RUNNING) {
+            var time = new Time.Moment(_timerStartTime);
+            time = time.add(new Time.Duration(_timerDuration));
+            try {
+                // var info = Time.Gregorian.info(time, Time.FORMAT_SHORT);
+                Background.registerForTemporalEvent(time);
+            } catch (e instanceof Background.InvalidBackgroundTimeException) {
+                // We shouldn't get here because our timer is 5 minutes, which
+                // matches the minimum background time. If we do get here,
+                // then it is not possible to set an event at the time when
+                // the timer is going to expire because we ran too recently.
+            }
+        }
+    }
+
+    //! If we do receive a background event while the application is open,
+    //! go ahead and reset to the default timer.
+    public function backgroundEvent() as Void {
+        // I think that this is not needed because it would be handled from the secondPassed
+
+        // finishTimerFromForeground();
+    }
+
+    //! Delete the background event. We can get rid of this event when the
+    //! application opens because now we can see exactly when the timer
+    //! is going to expire. We will set it again when the application closes.
+    public function deleteBackgroundEvent() as Void {
+        Background.deleteTemporalEvent();
     }
 
     //! Save all the persisted values into the object store. This gets

@@ -29,6 +29,8 @@ class PomoMinTimerController {
     }
 
 
+    const POMODORO_WORK_DURATION = 25;
+    const POMODORO_BREAK_DURATION = 5;
 
     private var _pomoView as PomoMinView;
     private var _timer as Timer.Timer;
@@ -256,6 +258,8 @@ class PomoMinTimerController {
                 finishTimerFromForeground();
                 
                 // TODO: should the method end here with a return? probably yes
+                // yes, it must
+                return;
             }
         } else if (_timerState == TIMER_STATE_PAUSED) {
             // TODO: it shouldn't arrive here because when timer is paused, it shouldn't be called the timer callback
@@ -287,18 +291,20 @@ class PomoMinTimerController {
         // TODO: Vibrate
         _pomoView.vibrate();
 
-        // TODO: Update UI? I think it's not needed as it's being updated from secondPassed
+        _pomoView.initializeTimerValues(_timerDuration, _pomodoroState);
 
+        // TODO: Update UI? I think it's not needed as it's being updated from secondPassed
+        _pomoView.requestUpdate(_timerDuration, _timerDuration);
         // TODO: Save properties?
     }
 
     private function changeStateToWork() as Void {
-        _timerDuration = 25 * 60; // TODO: minutes from config
+        _timerDuration = POMODORO_WORK_DURATION * 60; // TODO: minutes from config
         _pomodoroState = POMODORO_STATE_WORK;
     }
 
     private function changeStateToBreak() as Void {
-        _timerDuration = 5 * 60; // TODO: minutes from config
+        _timerDuration = POMODORO_BREAK_DURATION * 60; // TODO: minutes from config
         _pomodoroState = POMODORO_STATE_BREAK;
     }
 

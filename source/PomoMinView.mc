@@ -45,7 +45,7 @@ class PomoMinView extends WatchUi.View {
     private function _getTimerColor(pomodoroState as Number) as Graphics.ColorType{
         if(pomodoroState == POMODORO_STATE_WORK){
             return TIMER_WORK_COLOR;
-        }else if(_pomodoroState == POMODORO_STATE_BREAK){
+        }else {
             return TIMER_BREAK_COLOR;
         }
     }

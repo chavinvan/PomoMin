@@ -29,9 +29,9 @@ Please note that these steps might vary slightly depending on the specific model
 
 - [x] Enhance completion alert message
 - [x] Add vibration after completion when the screen is active
-- [ ] Refactor code
+- [] Refactor code
 - [x] Add a background circle for better progress bar visualization
-- [ ] Make Time Configurations Customizable
+- [x] Make Time Configurations Customizable
 - [ ] Support other languages:
     - [x] Spanish
     - [x] Italian

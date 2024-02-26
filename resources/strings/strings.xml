@@ -3,4 +3,10 @@
     <string id="TimerExpired" scope="background">Your pomodoro has expired!</string>
     <string id="WorkTimerExpired" scope="background">Time for a well-deserved pause!</string>
     <string id="BreakTimerExpired" scope="background">Time to dive back in!</string>
+    <string id="MenuFocusTime">Focus time</string>
+    <string id="MenuBreakTime">Break time</string>
+    <string id="MenuIntervals">Intervals</string>
+    <string id="MenuNotifications">Notifications</string>
+    <string id="MenuNotificationsSound">Sound</string>
+    <string id="MenuNotificationsVibration">Vibration</string>
 </strings>

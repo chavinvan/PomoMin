@@ -36,10 +36,16 @@ class PomoMinView extends WatchUi.View {
         _timerController = new PomoMinTimerController(self, backgroundRan);
     }
 
-    public function initializeTimerValues(timerDuration as Number, pomodoroState as Number) as Void {
-        _timerValue = timerDuration;
+    public function initializeTimerValues(timerValue as Number?, timerDuration as Number, pomodoroState as Number) as Void {
+        if(timerValue != null){
+            _timerValue = timerValue;
+        }else{
+            _timerValue = timerDuration;
+        }
+        
         _timerDuration = timerDuration;
         _timerColor = _getTimerColor(pomodoroState);
+        WatchUi.requestUpdate();
     }
 
     private function _getTimerColor(pomodoroState as Number) as Graphics.ColorType{
@@ -58,41 +64,64 @@ class PomoMinView extends WatchUi.View {
         return _timerController.onBackPressed();
     }
 
+    // TODO: language support
+    public function onMenuPressed() as Boolean {
+        // Generate a new Menu with a drawable Title
+        var menu = new WatchUi.Menu2({:title=> "Menu"});
+
+        // Add menu items
+        menu.addItem(new WatchUi.MenuItem(Application.loadResource($.Rez.Strings.MenuIntervals) as String, null, "intervals", null));
+        menu.addItem(new WatchUi.MenuItem(Application.loadResource($.Rez.Strings.MenuNotifications) as String, null, "notifications", null));
+
+        WatchUi.pushView(menu, new $.PomoMinMenuDelegate(), WatchUi.SLIDE_UP);
+
+        return true;
+    }
     // Called when this View is brought to the foreground. Restore
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
+        _timerController.checkForIntervalTimesChanges();
     }
 
     function vibrate() as Void {
 
+        var notificationsConfigRepository = NotificationsConfigRepository.getInstance();
+        var notificationSound = notificationsConfigRepository.getNotificationSound();
+        var notificationVibration = notificationsConfigRepository.getNotificationVibration();
+
         // Vibrate
-        if (Attention has :vibrate) {
-            var vibeData =
-            [
-                new Attention.VibeProfile(50, 1000), // On for two seconds
-                new Attention.VibeProfile(0, 500),  // Off for two seconds
-                new Attention.VibeProfile(50, 1000), // On for two seconds
-                new Attention.VibeProfile(0, 1000),  // Off for two seconds
-                new Attention.VibeProfile(50, 1000), // On for two seconds
-                new Attention.VibeProfile(0, 1000),  // Off for two seconds
-            ];
+        if(notificationVibration){
+            if (Attention has :vibrate) {
+                var vibeData =
+                [
+                    new Attention.VibeProfile(50, 1000), // On for two seconds
+                    new Attention.VibeProfile(0, 500),  // Off for two seconds
+                    new Attention.VibeProfile(50, 1000), // On for two seconds
+                    new Attention.VibeProfile(0, 1000),  // Off for two seconds
+                    new Attention.VibeProfile(50, 1000), // On for two seconds
+                    new Attention.VibeProfile(0, 1000),  // Off for two seconds
+                ];
 
-            Attention.vibrate(vibeData);
+                Attention.vibrate(vibeData);
+            }
         }
-
-        if (Attention has :ToneProfile) {
-            var toneProfile =
-            [
-                new Attention.ToneProfile( 2500, 250),
-                new Attention.ToneProfile( 0, 250),
-                new Attention.ToneProfile( 2500, 250),
-                new Attention.ToneProfile( 0, 250),
-                new Attention.ToneProfile( 2500, 250),
-                new Attention.ToneProfile( 0, 250),
-            ];
-            Attention.playTone({:toneProfile=>toneProfile});
+        
+        if(notificationSound){
+            if (Attention has :ToneProfile) {
+                var toneProfile =
+                [
+                    new Attention.ToneProfile( 2500, 250),
+                    new Attention.ToneProfile( 0, 250),
+                    new Attention.ToneProfile( 2500, 250),
+                    new Attention.ToneProfile( 0, 250),
+                    new Attention.ToneProfile( 2500, 250),
+                    new Attention.ToneProfile( 0, 250),
+                ];
+                Attention.playTone({:toneProfile=>toneProfile});
+            }
         }
+        
     }
 
     // Update the view

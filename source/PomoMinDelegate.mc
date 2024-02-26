@@ -29,4 +29,7 @@ class PomoMinDelegate extends WatchUi.BehaviorDelegate {
         return _pomoView.onBackPressed();
     }
 
+    public function onMenu() as Boolean {
+        return _pomoView.onMenuPressed();
+    }
 }

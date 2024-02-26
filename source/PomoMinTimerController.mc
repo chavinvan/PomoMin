@@ -29,8 +29,8 @@ class PomoMinTimerController {
     }
 
 
-    const POMODORO_WORK_DURATION = 25;
-    const POMODORO_BREAK_DURATION = 5;
+    private var POMODORO_FOCUS_DURATION as Number?;
+    private var POMODORO_BREAK_DURATION as Number?; 
 
     private var _pomoView as PomoMinView;
     private var _timer as Timer.Timer;
@@ -40,9 +40,13 @@ class PomoMinTimerController {
     private var _timerDuration as Number?;
     private var _timerStartTime as Number?;
     private var _timerPauseTime as Number?;
+    private var _timerValue as Number?;
 
     function initialize(pomoView as PomoMinView, backgroundRan as PersistableType) {
         _pomoView = pomoView;
+
+        // Get intervals duration
+        getIntervalDurations();
 
         // Create our timer object that is used to drive display updates
         _timer = new Timer.Timer();
@@ -79,7 +83,7 @@ class PomoMinTimerController {
 
         }
         
-        _pomoView.initializeTimerValues(_timerDuration, _pomodoroState);
+        _pomoView.initializeTimerValues(_timerValue, _timerDuration, _pomodoroState);
     }
 
     
@@ -151,7 +155,7 @@ class PomoMinTimerController {
         //saveProperties();
 
         // reinitialize timer values
-        _pomoView.initializeTimerValues(_timerDuration, _pomodoroState);
+        _pomoView.initializeTimerValues(null, _timerDuration, _pomodoroState);
 
         // update view
         _pomoView.requestUpdate(null, null);
@@ -162,6 +166,50 @@ class PomoMinTimerController {
         _timerState = TIMER_STATE_STOPPED;
         _timerStartTime = null;
         _timerPauseTime = null;
+    }
+
+    function getIntervalDurations() as Void {
+        var intervalsConfigRepository = IntervalsConfigRepository.getInstance();
+        POMODORO_FOCUS_DURATION = intervalsConfigRepository.getFocusIntervalDuration();
+        POMODORO_BREAK_DURATION = intervalsConfigRepository.getBreakIntervalDuration();
+    }
+
+    function checkForIntervalTimesChanges() {
+        // get focus time interval
+        var intervalsConfigRepository = IntervalsConfigRepository.getInstance();
+        var focusTime = intervalsConfigRepository.getFocusIntervalDuration();
+        var breakTime = intervalsConfigRepository.getBreakIntervalDuration();
+
+        // check for changes
+        if (focusTime != POMODORO_FOCUS_DURATION) {
+            POMODORO_FOCUS_DURATION = focusTime;
+            // update time duration if it's stopped and pomodoro is in focus
+            if(_pomodoroState == POMODORO_STATE_WORK &&_timerState == TIMER_STATE_STOPPED){
+                _timerDuration = POMODORO_FOCUS_DURATION * 60;
+                // reinitialize timer values
+                _pomoView.initializeTimerValues(null, _timerDuration, _pomodoroState);
+
+                // update view
+                _pomoView.requestUpdate(null, null);
+            }
+
+        }
+        
+        if (breakTime != POMODORO_BREAK_DURATION) {
+            POMODORO_BREAK_DURATION = breakTime;
+
+            if(_pomodoroState == POMODORO_STATE_BREAK && _timerState == TIMER_STATE_STOPPED){
+                _timerDuration = POMODORO_BREAK_DURATION * 60;
+                // reinitialize timer values
+                _pomoView.initializeTimerValues(null, _timerDuration, _pomodoroState);
+
+                // update view
+                _pomoView.requestUpdate(null, null);
+            }
+        }
+
+        POMODORO_FOCUS_DURATION = focusTime;
+        POMODORO_BREAK_DURATION = breakTime;
     }
 
     // Use this when a message indicating that the timer has expired
@@ -218,6 +266,24 @@ class PomoMinTimerController {
         _timerStartTime = Storage.getValue(TIMER_KEY_START_TIME);
         _timerPauseTime = Storage.getValue(TIMER_KEY_PAUSE_TIME);
         _timerDuration = Storage.getValue(TIMER_KEY_DURATION);
+
+        
+
+        // Check if timer state is running
+        if (_timerState == TIMER_STATE_RUNNING){
+            var elapsed = 0;
+            // calculate elapsed time
+            var currentTime = Time.now().value();
+            elapsed = currentTime - _timerStartTime;
+
+            // calculate timer value
+            var timerValue = _timerDuration - elapsed;
+            _timerValue = timerValue;
+
+        }
+
+        
+        
     }
 
     function initializeTimerDataStopped() as Void {
@@ -288,10 +354,9 @@ class PomoMinTimerController {
         // reset timer variables
         resetTimerVariables();
 
-        // TODO: Vibrate
         _pomoView.vibrate();
 
-        _pomoView.initializeTimerValues(_timerDuration, _pomodoroState);
+        _pomoView.initializeTimerValues(null, _timerDuration, _pomodoroState);
 
         // TODO: Update UI? I think it's not needed as it's being updated from secondPassed
         _pomoView.requestUpdate(_timerDuration, _timerDuration);
@@ -299,12 +364,12 @@ class PomoMinTimerController {
     }
 
     private function changeStateToWork() as Void {
-        _timerDuration = POMODORO_WORK_DURATION * 60; // TODO: minutes from config
+        _timerDuration = POMODORO_FOCUS_DURATION * 60;
         _pomodoroState = POMODORO_STATE_WORK;
     }
 
     private function changeStateToBreak() as Void {
-        _timerDuration = POMODORO_BREAK_DURATION * 60; // TODO: minutes from config
+        _timerDuration = POMODORO_BREAK_DURATION * 60;
         _pomodoroState = POMODORO_STATE_BREAK;
     }
 

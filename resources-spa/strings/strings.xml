@@ -3,4 +3,11 @@
     <string id="TimerExpired" scope="background">Your pomodoro has expired!</string>
     <string id="WorkTimerExpired" scope="background">¡Hora de tomar un descanso!</string>
     <string id="BreakTimerExpired" scope="background">¡Toca concentrarse!</string>
+    <string id="MenuFocusTime">Tiempo concentración</string>
+    <string id="MenuBreakTime">Tiempo descanso</string>
+    <string id="MenuIntervals">Intervalos</string>
+    <string id="MenuNotifications">Notificaciones</string>
+    <string id="MenuNotificationsSound">Sonido</string>
+    <string id="MenuNotificationsVibration">Vibración</string>
+
 </strings>
